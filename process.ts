@@ -15,7 +15,7 @@ const IPRuleSet = {
   version: 3,
   rules: [
     {
-      ip_cidr: ip,
+      ip_cidr: ip.sort(),
     },
   ],
 };
@@ -53,6 +53,10 @@ for (const domain of _domain) {
   }
   DomainRuleSet.rules[0].domain.push(domain);
 }
+
+console.log("Sorting domains....");
+
+DomainRuleSet.rules[0].domain.sort();
 
 console.log("Writing the Domain rule-set...");
 
