@@ -3,7 +3,7 @@
 		"download": "deno run --allow-net --allow-write download.ts",
 		"process": "deno run --allow-read --allow-write process.ts",
 		"convert": "cd output && sing-box rule-set compile trustpositif-ip.json && sing-box rule-set compile trustpositif-domain.json",
-		"run": "deno run download && deno run process && deno run convert"
+		"start": "deno run download && deno run process && deno run convert"
 	},
 	"imports": {
 		"@std/assert": "jsr:@std/assert@1",
