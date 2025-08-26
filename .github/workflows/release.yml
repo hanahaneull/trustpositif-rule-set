@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  workflow_dispatch: 
+  schedule:
+    - cron: 0 0 */3 * *
+
+jobs:
+  run:
+    name: run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      
+      - name: Install deps
+        id: deno-install
+        run: deno install
+
+      - name: Run program
+        id: run-program
+        run: deno run start
+
+      - name: time
+        id: time
+        run: echo "time=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Create a release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.time.outputs.time }}
+          release_name: ${{ steps.time.outputs.time }}
+          draft: false
+          prerelease: false
+
+      - name: Upload IP
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./output/trustpositif-ip.srs
+          asset_name: trustpositif-ip.srs
+          asset_content_type: application/octet-stream
+      
+      - name: Upload Domain
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./output/trustpositif-domain.srs
+          asset_name: trustpositif-domain.srs
+          asset_content_type: application/octet-stream
