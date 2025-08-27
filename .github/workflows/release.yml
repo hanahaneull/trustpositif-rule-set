@@ -22,9 +22,31 @@ jobs:
         id: deno-install
         run: deno install
 
-      - name: Run program
-        id: run-program
-        run: deno run start
+      - name: Download database
+        id: program-database
+        run: deno run download
+
+      - name: Process database
+        id: program-process
+        run: deno run process
+
+      - name: Download sing-box
+        id: download-sing-box
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'SagerNet/sing-box'
+          tag: 'v1.12.3'
+          fileName: 'sing-box-1.12.3-linux-amd64.tar.gz'
+          extract: true
+
+      - name: Convert database
+        id: program-convert
+        run: |
+          chmod +x sing-box-1.12.3-linux-amd64/sing-box
+          mv sing-box-1.12.3-linux-amd64/sing-box output
+          cd output
+          ./sing-box rule-set compile trustpositif-ip.json
+          ./sing-box rule-set compile trustpositif-domain.json
 
       - name: time
         id: time
